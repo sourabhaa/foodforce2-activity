@@ -195,7 +195,7 @@ def drawHTiled(frm, lenght, source, dest):
     k = lenght // sw
     exceed = lenght - k * sw
     
-    for i in xrange(k):
+    for i in range(k):
         dest.blit(source, (frm[0] + i * sw, frm[1]))
     
     #Draws exceeding part
@@ -258,7 +258,7 @@ def renderText(text, font, antialias, color, size, autosize, wordwrap):
     
     #Wordwrapping
     if wordwrap and not autosize:
-        for i in xrange(len(lines)):
+        for i in range(len(lines)):
             line = lines[i]
             del lines[i]
             lines[i:i] = wrapText(line, font, size[0]).split('\n')
@@ -285,7 +285,7 @@ def renderText(text, font, antialias, color, size, autosize, wordwrap):
         
         surf = pygame.Surface((width,height), pygame.SRCALPHA)
         surf.set_colorkey((0,0,0))
-        for i in xrange(len(lineSurfs)):
+        for i in range(len(lineSurfs)):
             surf.blit(lineSurfs[i], (0,i * lineHeight))
     
         return surf
@@ -394,7 +394,7 @@ class Widget(object):
                     self.mouseclick = True
                     
                     if self.onClick:
-			self.onClick(self)
+                        self.onClick(self)
                 
                 if self.REFRESH_ON_MOUSE_CLICK:
                     self.needsRefresh = True
@@ -798,8 +798,8 @@ class Window(Widget, Container):
         
         #If I don't have a surface or surface size is different from my size, i create a new one
         if self.shaded:
-	    temp='shaded-'
-	else:
+            temp='shaded-'
+        else:
             temp = ''
         if not self.surf or self.size != self.surf.get_size():
             del self.surf
@@ -964,7 +964,7 @@ class TextBox(Widget):
                     elif e.key in (pygame.K_RSHIFT, pygame.K_LSHIFT, pygame.K_RETURN):
                         pass
                     else:
-                        self.text = self.text[:self.currpos] +  e.unicode + self.text[self.currpos:]
+                        self.text = self.text[:self.currpos] +  e.str + self.text[self.currpos:]
                         self.currpos += 1                   
                     
         Widget.update(self, topmost)
@@ -1259,7 +1259,7 @@ class ListBox(Widget):
         
         self.surf.fill (self.style['bg-color'])
         
-        for i in xrange(len(self.items)):
+        for i in range(len(self.items)):
             drawRect = True
             if i== self.overedIndex ==self.selectedIndex and self.mouseover:
                 fontcolor = self.style['font-color']

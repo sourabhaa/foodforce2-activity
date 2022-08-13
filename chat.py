@@ -366,7 +366,7 @@ def showChat(chatText,back_image=None):
                 
                 chatObject.addChat(chatText[i],chatText[i+1])
                 if run==False:
-                    print 'reaching here also finely'
+                    print('reaching here also finely')
                 i_incrementor=True
             
         

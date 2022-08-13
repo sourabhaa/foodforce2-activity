@@ -18,14 +18,14 @@ class initialize:
                 rec_line.append(each_line[0:length])
             
     def ini_val_facility():
-        COST_HOUSE = {rec_line[0] : float(rec_line[1]),rec_line[2] : float(rec_line[3]),rec_line[4] : float(rec_line[5]}  
+        COST_HOUSE = {rec_line[0] : float(rec_line[1]),rec_line[2] : float(rec_line[3]),rec_line[4] : float(rec_line[5])}  
 
 def init_val():
     global COST_HOUSE
     init_obj = initialize("initial.ini")
     init_obj.get_data()
     init_obj.ini_val_facility()
-    print COST_HOUSE
+    print(COST_HOUSE)
 
 def main():
     init_val()

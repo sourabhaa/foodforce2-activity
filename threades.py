@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 #
 #   Author : Mohit Taneja (mohitgenii@gmail.com)
 #   Date : 9/06/2008 
@@ -56,7 +56,7 @@ try:
 
     display_info = pygame.display.Info()
     new_screen_size = [display_info.current_w,display_info.current_h]
-    
+    # print("new_screen_size: ", new_screen_size)
 except:
     
     new_screen_size = [800,600]
@@ -65,12 +65,13 @@ except:
 
 global screen   
 if model.FLAG_XO:
-    global screen
-    new_screen_size[1] -= 80.0/900.0*new_screen_size[1]
-    screen = pygame.display.set_mode(new_screen_size,SRCALPHA,32)
+    # global screen
+    # new_screen_size[1] -= int(80.0/900.0*new_screen_size[1])
+    # print("new_screen_Size: in model ", new_screen_size)
+    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 else:
-    
-    screen = pygame.display.set_mode(new_screen_size,FULLSCREEN|SRCALPHA,32)
+    # print(" new screen size in else: ",  pygame.FULLSCREEN)
+    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
     #screen = pygame.display.set_mode(new_screen_size,SRCALPHA,32)
 
 
@@ -186,7 +187,7 @@ def stop_facility(facility_obj,name_res = ''):
         a=0
         for i in range(len(model.resources)):
             name = model.resources[i].get_name()
-            if res_cost.has_key(name):
+            if name in res_cost:
                 if model.resources[i].get_vquantity() < res_cost[name]:
                     a=1
         if a==0:
@@ -251,12 +252,12 @@ def get_setup_text(facility_obj):
      
     
     if type(costbuild) != str:
-        for cost in costbuild.iteritems():
+        for cost in list(costbuild.items()):
             strcostbuild+=' '+str(cost[1]).lower()+' '+str(_name_dic[cost[0]])
     else:
         strcostbuild=costbuild
     if type(costrun) != str:
-        for cost in costrun.iteritems():
+        for cost in list(costrun.items()):
             strcostrun+=' '+str(cost[1]).lower()+' '+str(_name_dic[cost[0]])
     else:
         strcostrun=costrun
@@ -295,7 +296,7 @@ def get_upgrade_text(facility_obj):
             resafter = model.text_file.list_gen_res[1]+':'+ str(rem_build_mat)+ model.text_file.list_gen_res[2]+':'+str(rem_tools)
         strcostupgrade=''
         
-        for cost in cost_upgrade.iteritems():
+        for cost in list(cost_upgrade.items()):
             strcostupgrade+=' '+str(cost[1])+' '+_name_dic[str(cost[0])]
 
     except:
@@ -384,7 +385,7 @@ def place_facility_collide_check(rect_obj):
 
     market_rect = pygame.Rect(int(2800*(1200.0/new_screen_size[0])),int(2500*(900.0/new_screen_size[1])),int(516*(1200.0/new_screen_size[0])),int(600*(900.0/new_screen_size[1])))  
     
-    for key in model.facilities_list_sprites.values():
+    for key in list(model.facilities_list_sprites.values()):
         for i in range(len(key)):
             FACILITY_RECT_LIST.append(transform_obj.inverse_transform_rect(key[i].rect))
             
@@ -432,7 +433,7 @@ def build_facility(facility_obj, PLACING_DATA_LIST = [], list_food = model.DEF_F
         model.ppl = facility_obj.update_manp_res(model.ppl)
         
         
-    except Exceptions.Resources_Underflow_Exception,args:
+    except Exceptions.Resources_Underflow_Exception as args:
         res = str(args).lower()
         text = model.text_file.setup_fac_exceptions['low_resource']%{'resource':res}
         return text
@@ -495,7 +496,7 @@ def upgrade_facility(facility_obj):
     #global model.resources
     try:
         model.resources = facility_obj.update_level(model.resources,model.ppl)
-    except Exceptions.Resources_Underflow_Exception,args:
+    except Exceptions.Resources_Underflow_Exception as args:
         res = str(args).lower()
         text = model.text_file.upgrade_fac_exceptions['low_resource']%{'resource':res}
         return text
@@ -551,7 +552,7 @@ def calculate_indicators_starting():
     fats = 0.0
     for resource in model.food_resources:
         name = resource.get_name()
-        if temp.has_key(name):
+        if name in temp:
             quantity = int(resource.get_vquantity())
             protiens += temp[name]['PROTIENS'] * quantity
             vitamins += temp[name]['VITAMINS'] * quantity
@@ -623,7 +624,7 @@ def update_turn(delay = 0):
             for i in range(len(model.facilities_list)):
                 try:
                     model.resources = model.facilities_list[i].turn(model.resources)
-                except Exceptions.Resources_Underflow_Exception,args:
+                except Exceptions.Resources_Underflow_Exception as args:
                     
                     t = threading.Thread(target = stop_facility , args = [model.facilities_list[i],str(args)])
                     t.start()
@@ -660,7 +661,7 @@ def update_turn(delay = 0):
             fats = 0.0
             for resource in model.food_resources:
                 name = resource.get_name()
-                if temp.has_key(name):
+                if name in temp:
                     quantity = int(resource.get_vquantity())
                     #print "name, quantity of food resource",name,quantity
                     protiens += temp[name]['PROTIENS'] * quantity
@@ -758,7 +759,7 @@ def buy_res(res,res_quantity):
     except Exceptions.Money_Underflow_Exception:
         text = model.text_file.buysell_exceptions['low_money']
         return text
-    except Exceptions.Resources_Underflow_Exception,args:
+    except Exceptions.Resources_Underflow_Exception as args:
         text = model.text_file.buysell_exceptions['low_mkt_qty']
         return text
     except Exceptions.Resources_Overflow_Exception:
@@ -779,7 +780,7 @@ def sell_res(res,res_quantity):
     try:
         quantity=int(res_quantity)
         model.money = res.sell(quantity , model.money)       
-    except Exceptions.Resources_Underflow_Exception,args:
+    except Exceptions.Resources_Underflow_Exception as args:
         text = model.text_file.buysell_exceptions['low_qty']
         return text
     except Exceptions.Resources_Overflow_Exception:
@@ -946,11 +947,16 @@ def resume_game():
     
 def check_saved_game_level():
     '''Used to check the status of game, saved or unsaved'''
- 
+    storyboard_name = []
     global game_save_flag
-    storyboard_list_file = open('storyboard_list.pkl')
-    for i in range(pickle.load(storyboard_list_file)):
-        storyboard_name = pickle.load(storyboard_list_file)
+    while True:
+        try:
+            with open('storyboard_list.pkl', 'rb') as f:
+                storyboard_name.append(pickle.load(f, encoding='bytes'))
+        except EOFError:
+            break
+    # print("story_board: ",type(storyboard_name))
+    for i in range(len(storyboard_name)):
         if os.path.exists(os.path.join('storyboards',str(storyboard_name[1]),'save_game.pkl')):
             game_save_flag = True       
             break
@@ -1008,7 +1014,8 @@ message = Messages()   # the Mesages class object
 
 class Workshop_sprite(pygame.sprite.Sprite):
     
-    def __init__(self,(x,y)):
+    def __init__(self, coordinates):
+        (x,y) = coordinates
         pygame.sprite.Sprite.__init__(self)
         self.frame = 0
         self.ratio = transform_obj.ratio
@@ -1077,7 +1084,8 @@ class Workshop_sprite(pygame.sprite.Sprite):
   
 class House_sprite(pygame.sprite.Sprite):
     
-    def __init__(self,(x,y)):
+    def __init__(self, coordinates):
+        (x,y) = coordinates
         pygame.sprite.Sprite.__init__(self)
         # Saving tiles of all the upgrades in tiles_list
         self.frame = 0
@@ -1147,7 +1155,8 @@ class House_sprite(pygame.sprite.Sprite):
         
 class Hospital_sprite(pygame.sprite.Sprite):
     
-    def __init__(self,(x,y)):
+    def __init__(self, coordinates):
+        (x,y) = coordinates
         pygame.sprite.Sprite.__init__(self)
         # Saving tiles of all the upgrades in tiles_list
         self.frame = 0
@@ -1218,7 +1227,8 @@ class Hospital_sprite(pygame.sprite.Sprite):
         
 class School_sprite(pygame.sprite.Sprite):
     
-    def __init__(self,(x,y)):
+    def __init__(self, coordinates):
+        (x,y) = coordinates
         pygame.sprite.Sprite.__init__(self)
        # Saving tiles of all the upgrades in tiles_list
         
@@ -1292,7 +1302,8 @@ class School_sprite(pygame.sprite.Sprite):
  
 class Farm_sprite(pygame.sprite.Sprite):
     
-    def __init__(self,(x,y)):
+    def __init__(self, coordinates):
+        (x,y) = coordinates
         pygame.sprite.Sprite.__init__(self)
         self.frame = 0
         self.built_flag = 0
@@ -1352,7 +1363,8 @@ class Farm_sprite(pygame.sprite.Sprite):
     
 class Fountain_sprite(pygame.sprite.Sprite):
     
-    def __init__(self,(x,y)):
+    def __init__(self, coordinates):
+        (x,y) = coordinates
         pygame.sprite.Sprite.__init__(self)
         # Saving tiles of all the upgrades in tiles_list
         self.frame = 0
@@ -1438,14 +1450,14 @@ class Environment2:
             self.dis_image[image_no] = self.surf
         
         self.dis_image_trans = {}
-        for self.dis_image_key in self.dis_image.keys():
+        for self.dis_image_key in list(self.dis_image.keys()):
             self.dis_image_trans[self.dis_image_key] = transform_obj.transform_surface(self.dis_image.get(self.dis_image_key))
 
            
     def update_background(self):
         #self.dis_image_trans = {}
         if transform_obj.check_update_condition():
-            for self.dis_image_key in self.dis_image.keys():
+            for self.dis_image_key in list(self.dis_image.keys()):
                 self.dis_image_trans[self.dis_image_key] = transform_obj.transform_surface(self.dis_image.get(self.dis_image_key))
 
         rect = self.dis_image_trans[self.dis_image_key].get_rect()
@@ -1494,7 +1506,7 @@ class Build(pygame.sprite.Sprite):
         self.market_image = pygame.image.load(os.path.join('data', filename)).convert_alpha()
         self.image = transform_obj.transform_surface(self.market_image)
         if colorkey is not None:
-            if colorkey is -1:
+            if colorkey == -1:
                 colorkey = self.image.get_at((0, 0))
             self.image.set_colorkey(colorkey, RLEACCEL)
         self.rect = self.image.get_rect()
@@ -1587,7 +1599,7 @@ class Villager(pygame.sprite.Sprite):
             self.initial_position = [self.range[0]+int(random.random()*self.range[2]), self.range[1]+int(random.random()*self.range[3])]
             self.position = self.initial_position
             self.position_rect = self.rect.move(self.position)
-            for key in model.facilities_list_sprites.keys(): 
+            for key in list(model.facilities_list_sprites.keys()): 
                 sprite_list = model.facilities_list_sprites[key]
                 for sprite in sprite_list:
                     self.test_rect = sprite.get_position()
@@ -1628,7 +1640,7 @@ class Villager(pygame.sprite.Sprite):
             
     def collide_build(self):
         
-        self.set_speed(map(lambda x: -x, self.speed))
+        self.set_speed([-x for x in self.speed])
         
         self.position = [self.position[0] + 5, self.position[1] + 5]
         self.position = [self.position[0] + 5, self.position[1] + 5]
@@ -1786,8 +1798,9 @@ class Transform:
         if self.motion_left:
             self.pos_x -= speed*model.iteration_time/1000
   
-    def move_mouse(self,(x,y)):
+    def move_mouse(self, coordinates):
     
+        (x,y) = coordinates
         if self.mouse_move_flag == True:
             self.pos_x -= x
             self.pos_y -=y
@@ -1804,8 +1817,9 @@ class Transform:
         
         self.pos_x -= dist    
     
-    def move_free(self,(x,y)):
+    def move_free(self, coordinates):
     
+        (x,y) = coordinates
         self.pos_x -= x
         self.pos_y -=y
     
@@ -1848,18 +1862,19 @@ class Transform:
             self.pos_y = int(b - 280)
     
     
-    def focus_at(self,(x,y)):
+    def focus_at(self, coordinates):
         '''Used to focus at a particular position'''
-        #self.ratio = 0.6
+        (x,y) = coordinates
         self.pos_x = int(x*self.ratio) -500
         self.pos_y = int(y*self.ratio) - 80
   
-    def transform_cordinates(self,(x,y)):
+    def transform_cordinates(self, coordinates):
+        (x,y) = coordinates
         newx = x*self.ratio - self.pos_x
         newy = y*self.ratio - self.pos_y + resize_pt_y(40)
         return (int(newx),int(newy))
  
-    def inverse_transform_cordinate(self,(x,y)):
+    def inverse_transform_cordinate(self, coordinates):
         ''' Transform the Screen Cordinates to Village Cordinates
         
         Args:
@@ -1869,12 +1884,13 @@ class Transform:
          newx:int:new x cordinate
          newy:int:new y cordinate
         '''
+        (x,y) = coordinates
         newx = ((x + self.pos_x)/self.ratio)*(1200.0/new_screen_size[0])
         newy = ((y + self.pos_y - 40)/self.ratio)*(900.0/new_screen_size[1])
         return(int(newx),int(newy))
     
     
-    def inverse_trans_cordinate(self,(x,y)):
+    def inverse_trans_cordinate(self, coordinates):
         ''' Transform the Screen Cordinates to Village Cordinates
         
         Args:
@@ -1884,11 +1900,12 @@ class Transform:
          newx:int:new x cordinate
          newy:int:new y cordinate
         '''
+        (x,y) = coordinates
         newx = ((x + self.pos_x)/self.ratio)
         newy = ((y + self.pos_y - resize_pt_y(40))/self.ratio)
         return(int(newx),int(newy))
     
-    def inverse_transform_rect(self,(x,y,w,z)):
+    def inverse_transform_rect(self, coordinates):
         ''' Transform the Screen Cordinates to Village Cordinates
         
         Args:
@@ -1898,6 +1915,7 @@ class Transform:
          newx:int:new x cordinate
          newy:int:new y cordinate
         '''
+        (x,y,w,z) = coordinates
         newx = ((x + self.pos_x)/self.ratio)*(1200.0/new_screen_size[0])
         newy = ((y + self.pos_y - 40)/self.ratio)*(900.0/new_screen_size[1])
         neww = (w/self.ratio)*(1200.0/new_screen_size[0])
@@ -2220,19 +2238,19 @@ class Animation:
         
         # Checking for collision of villagers nd other facilities and the market
         collide = pygame.sprite.groupcollide(villagers, facilities_group, False, False)
-        for villager in collide.keys():
+        for villager in list(collide.keys()):
             villager.collide_build()
         collide = pygame.sprite.groupcollide(villagers, market, False, False)
-        for villager in collide.keys():
+        for villager in list(collide.keys()):
             villager.collide_build()
         collide = pygame.sprite.groupcollide(villagers, facilities_group, False, False)
-        for villager in collide.keys():
+        for villager in list(collide.keys()):
             new_sprite = Villager(villager.get_attributes())
             villager.remove(all,villagers)
             villager.kill()
             new_sprite.add(villagers,all)
         collide = pygame.sprite.groupcollide(villagers, market, False, False)
-        for villager in collide.keys():
+        for villager in list(collide.keys()):
             new_sprite = Villager(villager.get_attributes())
             villager.remove(all,villagers)
             villager.kill()
@@ -2261,9 +2279,9 @@ class Sounds:
         for sound_name in sound_list:
             try:
                 sound_dic[sound_name] = pygame.mixer.Sound(sound_name)
-            except Exception is e:
+            except Exception as e:
                 sound_dic[sound_name] = None
-                print "Error Loading Sound: " + str(e)+ '\n ' + sound_name
+                print(("Error Loading Sound: " + str(e)+ '\n ' + sound_name))
         return sound_dic
     
     def play_sound(self,sound_name,volume = SOUND_VOLUME):

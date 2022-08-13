@@ -40,9 +40,10 @@ class bar:
 
     color_bar = (47,47,255)
 
-    def __init__(self, (x_value, y_value)):
+    def __init__(self, coordinates):
         ''' Draws a bar on the surface at posn x,y
         '''
+        (x_value, y_value) = coordinates
         self.x = x_value
         self.y = y_value
 
@@ -423,7 +424,7 @@ class facilities_panel:
             self.name_labels[2*i].text = model.text_file.facilities_list[i]
             self.name_labels[2*i+1].text = model.text_file.num_text[0]+':'+str(int(self.list_values1[i]))+model.text_file.level_text[0]+':'+str(int(self.list_values2[i]))
             
-        print self.name_labels[3].text
+        print(self.name_labels[3].text)
         
     def update_value(self):
         ''' Updates the Facilities panel

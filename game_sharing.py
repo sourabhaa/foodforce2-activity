@@ -48,8 +48,8 @@ def withBuddy(buddy1):
     global buddy
     global check_withBuddy
     buddy=buddy1
-    print buddy.props.nick
-    print 'reached in withbuddy\n'
+    print(buddy.props.nick)
+    print('reached in withbuddy\n')
     check_withBuddy=True
                     
                         
@@ -75,7 +75,7 @@ def test_players_in_game():             #returns the dictionary of all the playe
     return players_in_game
 
 def broadcast_msg(msg_content):
-    print 'in game_sharing.broadcast_msg'
+    print('in game_sharing.broadcast_msg')
     mesh.broadcast(msg_content)
 
 def unicast_msg(handle,msg_content):
@@ -180,7 +180,7 @@ def sharing_handler(type,handle,content):
     
     if type == mesh.CONNECT:
             _is_shared=True
-            print "Connected to the mesh."
+            print("Connected to the mesh.")
             
     elif type == mesh.PARTICIPANT_ADD:
             mesh.lookup_buddy(handle,callback=withBuddy )
@@ -194,13 +194,13 @@ def sharing_handler(type,handle,content):
                 player=Player(handle,xoOwner)
                 players_in_game[_my_handle]=player
                 
-                print "Me:", buddy.props.nick
+                print("Me:", buddy.props.nick)
                 check_withBuddy=False
                 
                 
             else:
                 _is_connected=True
-                print "Join:", buddy.props.nick
+                print("Join:", buddy.props.nick)
                 
 
                 player = Player(handle,buddy)
@@ -214,9 +214,9 @@ def sharing_handler(type,handle,content):
                 check_withBuddy=False
 
     elif type == mesh.PARTICIPANT_REMOVE:
-            if players_in_game.has_key(handle):
+            if handle in players_in_game:
                 player = players_in_game[handle]
-                print "Leave:", player.nick
+                print("Leave:", player.nick)
                 
                 
                 del players_in_game[handle]
@@ -229,20 +229,20 @@ def sharing_handler(type,handle,content):
                 elif len(players_in_game)==1:
                     _is_connected=False
 
-            print 'someone is removed'
+            print('someone is removed')
 
 
     elif type == mesh.MESSAGE_MULTI:
         if handle == mesh.my_handle():
                 # ignore messages from ourselves
-                print 'I have broadcasted '
+                print('I have broadcasted ')
 
-        elif players_in_game.has_key(handle):
+        elif handle in players_in_game:
                 player = players_in_game[handle]
                 try:
                     
                     
-                    print "got a broadcasted msg from %s" % (player.nick)
+                    print("got a broadcasted msg from %s" % (player.nick))
                     '''
                     if content==types.IntType:
                         pass
@@ -269,50 +269,50 @@ def sharing_handler(type,handle,content):
                             unicast_msg(p.handle, "Succeeded in unicasting")
                     '''
                     for i,v in enumerate(content):
-                        print i,v
+                        print(i,v)
                     messageResponderBroadcast(handle,player.nick,content)
                             
                 except:
-                    print "Error handling message: %s\n%s" % (type, sys.exc_info())
+                    print("Error handling message: %s\n%s" % (type, sys.exc_info()))
                     
         else:
-                print "Message from unknown buddy?"
+                print("Message from unknown buddy?")
 
     elif type ==mesh.MESSAGE_UNI:
         if handle == mesh.my_handle():
                 # ignore messages from ourselves
-                print 'I have unicasted myself,might be of trouble'
+                print('I have unicasted myself,might be of trouble')
 
-        elif players_in_game.has_key(handle):
+        elif handle in players_in_game:
                 player = players_in_game[handle]
                 try:
                     
-                    print "got a unicasted msg from %s" % (player.nick)
+                    print("got a unicasted msg from %s" % (player.nick))
 
-                    if content==types.IntType:
+                    if content==int:
                         pass
-                    if content==types.FloatType:
+                    if content==float:
                         pass
-                    if content==types.LongType:
+                    if content==int:
                         pass
                     #if content==types.StringType:
                      #   pass
-                    if content==types.DictType:
+                    if content==dict:
                         pass
-                    if content==types.TupleType:
+                    if content==tuple:
                         pass
                   #  if content==types.ListType:
                    #     pass
                     for i,v in enumerate(content):
-                        print i,v
+                        print(i,v)
 
                     messageResponderUnicast(handle,player.nick,content)
                                
                 except:
-                    print "Error handling message: %s\n%s" % (type, sys.exc_info())
+                    print("Error handling message: %s\n%s" % (type, sys.exc_info()))
                     
         else:
-                print "Message from unknown buddy?"
+                print("Message from unknown buddy?")
         
                 
 

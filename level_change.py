@@ -64,10 +64,10 @@ class change_level:
             
             for e in gui.setEvents(pygame.event.get()):
                 if e.type == pygame.QUIT:
-                    print 'in pygame.quit'                    
+                    print('in pygame.quit')                    
                     #safe_exit()
                 if e.type == QUIT:
-                    print 'in quit'
+                    print('in quit')
                     #safe_exit()
 
             #if level_updater.is_alive()==False:

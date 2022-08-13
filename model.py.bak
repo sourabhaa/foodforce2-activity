@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 #
 #   Author : Mohit Taneja (mohitgenii@gmail.com)
 #   Date : 3/06/08
@@ -268,13 +268,10 @@ def init_cons(file_name):
     PDICT_EDUCATION = pickle.load(data_file)
     PDICT_TRAINING = pickle.load(data_file)
     
-# with open('storyboard_list.pkl') as storyboard_list_file:
-    # data_dict = pickle.load(storyboard_list_file, encoding='latin1')
-# a = pickle.load(storyboard_list_file,encoding='latin1')
-# with open('storyboard_list.pkl') as storyboard_list_file:
-# storyboard_name = pickle.load(storyboard_list_file,encoding="latin1")
-storyboard_name = ['Gokul An Indian Village', 'Haiti Earthquake']
-init_cons(os.path.join('storyboards',storyboard_name[1],'data','data1.pkl'))
+
+pickle.load(storyboard_list_file)
+storyboard_name = pickle.load(storyboard_list_file)
+init_cons(os.path.join('storyboards',str(storyboard_name[1]),'data','data1.pkl'))
         
 def save_cons():
     ''' Used to save constants
@@ -860,9 +857,9 @@ class Indicator:
                                                               # ASSUMPTION
         
         self._value = 0
-        for key in list(parameter_values.keys()):
+        for key in parameter_values.keys():
 
-            if(key in self._parameters):
+            if(self._parameters.has_key(key)):
                 self._value += parameter_values[key] * self._parameters[key] * self.maximum_value
 
             if(self._value>self.maximum_value):
@@ -1117,7 +1114,7 @@ class Facility:
         
         production = {}
         
-        for key in list(self.base_production.keys()):
+        for key in self.base_production.keys():
             production[key]=self._number * self.base_production[key] + (self.base_production[key] * self._number * self.level_incr_prod * self._level)
         return production
 
@@ -1148,7 +1145,7 @@ class Facility:
         @returntype dictionary
         """
         consumption = {}
-        for key in list(self.base_consumption.keys()):
+        for key in self.base_consumption.keys():
             consumption[key]=self._number * self.base_consumption[key] + (self.base_consumption[key] * self._number * self.level_incr_cons * self._level)
         return consumption
 
@@ -1160,9 +1157,9 @@ class Facility:
         '''
         for i in range(len(resources)):
             name = resources[i].get_name()
-            if name in self.cost_inc_level:
+            if self.cost_inc_level.has_key(name):
                 if resources[i].get_vquantity() < self.cost_inc_level[name]:
-                    raise Exceptions.Resources_Underflow_Exception(name)
+                    raise (Exceptions.Resources_Underflow_Exception)
         
     def update_level(self, resources,people_obj):
         """ Updates the level of facility installed, all the buildings of a facility installed
@@ -1186,9 +1183,9 @@ class Facility:
         
         for i in range(len(resources)):
             name = resources[i].get_name()
-            if name in self.cost_inc_level:
+            if self.cost_inc_level.has_key(name):
                 if resources[i].get_vquantity() < self.cost_inc_level[name]:
-                    raise Exceptions.Resources_Underflow_Exception(args)
+                    raise Exceptions.Resources_Underflow_Exception,args
                 else:
                     resources[i].change_vquantity(-self.cost_inc_level[name])
         if self._level == MAX_LEVELS_FACILITY:
@@ -1198,8 +1195,8 @@ class Facility:
         # Generating the change in manpower due to upgradation
         self.manp_dist_dict = MANP_DIST_DICT
         self.dict_res_change = FACILITY_MANP_DICT_CH[self._name]
-        for keying in list(self.manp_dist_dict.keys()):
-            if keying in self.dict_res_change:
+        for keying in self.manp_dist_dict.keys():
+            if self.dict_res_change.has_key(keying):
                 self.manp_dist_dict[keying] +=  self.level_incr_prod*self._number*self.dict_res_change[keying]
         people_obj.change_population_dist(self.manp_dist_dict['TOTAL POPULATION'], self.manp_dist_dict['SHELTERED PEOPLE'], self.manp_dist_dict['EDUCATED PEOPLE'], self.manp_dist_dict['HEALTHY PEOPLE'], self.manp_dist_dict['PEOPLE FED'], self.manp_dist_dict['EMPLOYED PEOPLE IN CONSTRUCTION'], self.manp_dist_dict['EMPLOYED PEOPLE IN HOSPITAL'], self.manp_dist_dict['EMPLOYED PEOPLE IN SCHOOL'], self.manp_dist_dict['EMPLOYED PEOPLE IN WORKSHOP'], self.manp_dist_dict['EMPLOYED PEOPLE IN FARM'])
         MANP_DIST_DICT = { 'TOTAL POPULATION' : 0.0 , 'SHELTERED PEOPLE' : 0.0 , 'EDUCATED PEOPLE' : 0.0 , 'HEALTHY PEOPLE' : 0.0 , 'PEOPLE FED' : 0.0 , 'EMPLOYED PEOPLE IN CONSTRUCTION' : 0.0 , 'EMPLOYED PEOPLE IN HOSPITAL' : 0.0 , 'EMPLOYED PEOPLE IN SCHOOL' : 0.0 , 'EMPLOYED PEOPLE IN WORKSHOP' : 0.0 , 'EMPLOYED PEOPLE IN FARM' : 0.0 }
@@ -1210,9 +1207,9 @@ class Facility:
         '''
         for i in range(len(resources)):
             name = resources[i].get_name()
-            if name in self.cost_build:
+            if self.cost_build.has_key(name):
                 if resources[i].get_vquantity() < self.cost_build[name]:
-                    raise Exceptions.Resources_Underflow_Exception(name)
+                    raise Exceptions.Resources_Underflow_Exception,name
         
         
     def build_start(self, resources , people_obj):
@@ -1233,9 +1230,9 @@ class Facility:
         self.check_resources_reqd_build(resources)
         for i in range(len(resources)):
             name = resources[i].get_name()
-            if name in self.cost_build:
+            if self.cost_build.has_key(name):
                 if resources[i].get_vquantity() < self.cost_build[name]:
-                    raise Exceptions.Resources_Underflow_Exception(name)
+                    raise Exceptions.Resources_Underflow_Exception,name
                 else:
                     resources[i].change_vquantity(-self.cost_build[name])
         if self.check_manp_res(people_obj) < 0:
@@ -1304,8 +1301,8 @@ class Facility:
         self.dict_res_run = FACILITY_MANP_DICT_RUN[self._name]
         self.manp_dist_dict = MANP_DIST_DICT
 
-        for keying in list(self.manp_dist_dict.keys()):
-            if keying in self.dict_res_run:
+        for keying in self.manp_dist_dict.keys():
+            if self.dict_res_run.has_key(keying):
                 self.manp_dist_dict[keying] = -self.dict_res_run[keying]
 
         people_obj.change_population_dist(self.manp_dist_dict['TOTAL POPULATION'], self.manp_dist_dict['SHELTERED PEOPLE'], self.manp_dist_dict['EDUCATED PEOPLE'], self.manp_dist_dict['HEALTHY PEOPLE'], self.manp_dist_dict['PEOPLE FED'], self.manp_dist_dict['EMPLOYED PEOPLE IN CONSTRUCTION'], self.manp_dist_dict['EMPLOYED PEOPLE IN HOSPITAL'], self.manp_dist_dict['EMPLOYED PEOPLE IN SCHOOL'], self.manp_dist_dict['EMPLOYED PEOPLE IN WORKSHOP'], self.manp_dist_dict['EMPLOYED PEOPLE IN FARM'])
@@ -1328,13 +1325,13 @@ class Facility:
         
         for i in range(len(resources)):
             name = resources[i].get_name()
-            if name in production:
+            if production.has_key(name):
                 resources[i].change_vquantity(production[name])
-            if name in consumption:
+            if consumption.has_key(name):
                 if resources[i].get_vquantity() >= consumption[name]:
                     resources[i].change_vquantity(-consumption[name])
                 else:
-                    raise Exceptions.Resources_Underflow_Exception(name)
+                    raise Exceptions.Resources_Underflow_Exception,name
 
         return resources
 
@@ -1352,15 +1349,15 @@ class Facility:
         self.dict_res_run = FACILITY_MANP_DICT_RUN[self._name]
         self.manp_dist_dict = MANP_DIST_DICT
         self.dict_res_change = FACILITY_MANP_DICT_CH[self._name]
-        for keying in list(self.manp_dist_dict.keys()):
+        for keying in self.manp_dist_dict.keys():
 
-            if keying in self.dict_res_build:
+            if self.dict_res_build.has_key(keying):
                 self.manp_dist_dict[keying] = self.dict_res_build[keying]
 
-            if keying in self.dict_res_run:
+            if self.dict_res_run.has_key(keying):
                 self.manp_dist_dict[keying] = self.dict_res_run[keying]
 
-            if keying in self.dict_res_change:
+            if self.dict_res_change.has_key(keying):
                 self.manp_dist_dict[keying] = self.dict_res_change[keying] + self.level_incr_prod*self._level*self.dict_res_change[keying]
 
         people_obj.change_population_dist(self.manp_dist_dict['TOTAL POPULATION'], self.manp_dist_dict['SHELTERED PEOPLE'], self.manp_dist_dict['EDUCATED PEOPLE'], self.manp_dist_dict['HEALTHY PEOPLE'], self.manp_dist_dict['PEOPLE FED'], self.manp_dist_dict['EMPLOYED PEOPLE IN CONSTRUCTION'], self.manp_dist_dict['EMPLOYED PEOPLE IN HOSPITAL'], self.manp_dist_dict['EMPLOYED PEOPLE IN SCHOOL'], self.manp_dist_dict['EMPLOYED PEOPLE IN WORKSHOP'], self.manp_dist_dict['EMPLOYED PEOPLE IN FARM'])
@@ -1381,10 +1378,10 @@ class Facility:
         self.dict_res_build = FACILITY_MANP_DICT_BUILD[self._name]
         self.dict_res_run = FACILITY_MANP_DICT_RUN[self._name]
 
-        for keying in list(self.dict_res_build.keys()):
+        for keying in self.dict_res_build.keys():
             people_req += self.dict_res_build[keying]
 
-        for keying in list(self.dict_res_run.keys()):
+        for keying in self.dict_res_run.keys():
             people_req += self.dict_res_run[keying]
 
         return people_obj.get_total_no_of_ppl_un_emp() - people_req
@@ -1483,7 +1480,7 @@ class Resource:
             self.vquantity = self.max_res_value_village
             raise Exceptions.Resources_Overflow_Exception
         if quantity < 0:
-            raise Exceptions.Resources_Underflow_Exception(self._name)
+            raise Exceptions.Resources_Underflow_Exception,self._name
         
         self.vquantity = quantity
 
@@ -1507,7 +1504,7 @@ class Resource:
             self.mquantity = self.max_res_value_market
             raise Exceptions.Resources_Overflow_Exception
         if quantity < 0:
-            raise Exceptions.Resources_Underflow_Exception(self._name)
+            raise Exceptions.Resources_Underflow_Exception,self._name
         
         self.mquantity = quantity
 
@@ -1530,7 +1527,7 @@ class Resource:
             self.vquantity = self.max_res_value_village
             raise Exceptions.Resources_Overflow_Exception
         if (self.vquantity + change) < 0:
-            raise Exceptions.Resources_Underflow_Exception(self._name)
+            raise Exceptions.Resources_Underflow_Exception,self._name
         
         self.vquantity = self.vquantity + change
 
@@ -1546,7 +1543,7 @@ class Resource:
             self.mquantity = self.max_res_value_market
             raise Exceptions.Resources_Overflow_Exception
         if (self.mquantity + change) < 0:
-            raise Exceptions.Resources_Underflow_Exception(self._name)
+            raise Exceptions.Resources_Underflow_Exception,self._name
         
         self.mquantity = self.mquantity + change
 
@@ -2157,7 +2154,7 @@ class People:
         for i in range(len(resources)):
             name = resources[i].get_name()
             temp=FOOD_DIST_DICT
-            if name in temp:
+            if temp.has_key(name):
                 temp[name]=resources[i].get_vquantity()
                 food+=temp[name]
         
@@ -2170,12 +2167,12 @@ class People:
         food_temp = self.no_of_ppl_fed*FOOD_PP
         ratio = food_temp/food
 
-        for key in list(temp.keys()):
+        for key in temp.keys():
             temp[key] -= ratio*temp[key]
         
             for i in range(len(resources)):
                 name = resources[i].get_name()
-                if name in temp:   
+                if temp.has_key(name):   
                     resources[i].set_vquantity(temp[name])
 
         for i in range(len(resources)):

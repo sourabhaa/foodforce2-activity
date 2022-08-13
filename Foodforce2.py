@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 # -*- coding: ISO-8859-1 -*-
 #   Author : Mohit Taneja (mohitgenii@gmail.com)
 #   Date : 9/06/2008
@@ -55,7 +55,7 @@ if model.FLAG_XO:
 
 select_lang_flag = 1
 desktop2 = gui.Desktop()
-set_icon(pygame.image.load(os.path.join('data', 'WFPLOGO.png')).convert_alpha())
+# set_icon(pygame.image.load(os.path.join('data', 'WFPLOGO.png')).convert_alpha())
 select_flag  = 1                #Used to determine the button clicked in the main menu..Start new game or Resume Saved Level
 update_thread = None
 message_thread = None
@@ -183,7 +183,7 @@ def event_handling(e):
         proceduralFlow.openStoryBoardFile()
         threades.delete_saved_game()
         proceduralFlow.storyboard_level = 1
-	data_file = os.path.join('storyboards',str(model.storyboard_file),'data','data1.pkl')
+        data_file = os.path.join('storyboards',str(model.storyboard_file),'data','data1.pkl')
         proceduralFlow.load_level_obj.new_level_stats(data_file,'graphics_layout.pkl')
         event = game_events.Event(type = game_events.ACTIONCOMPLETEEVENT, facility_name = '', res_name = '' , res_quantity = 0)
         game_events.EventQueue.add(event)
@@ -296,7 +296,7 @@ class starting_intro:
             self.resume_button.onClick = self.resume
             
             self.start_game_again_button = gui.Button(position = threades.resize_pos((475,500)), size = threades.resize_pos((250,50)), parent = desktop2, text = model.text_file.start_game_again[0],style = self.button_style) 
-	    self.start_game_again_button.onClick = self.storyboardWindow
+            self.start_game_again_button.onClick = self.storyboardWindow
             
             #Save Game Button
             if proceduralFlow.storyboard_level != 1:
@@ -322,7 +322,7 @@ class starting_intro:
      
     def start_game_again(self,button=None):
         global select_flag
-	global panel
+        global panel
         #stopping the soundtrack
         threades.audio.stop_soundtrack()
         threades.audio.play_music(False,'soundtrack')
@@ -333,17 +333,17 @@ class starting_intro:
         storyboardObj.actionRunningFlag = False
         storyboardObj.prevConditionResult = -1
         storyboardObj.norConditionFlag = False
-	self.close_win()
+        self.close_win()
         if select_flag == False:
             self.resume_saved_level()
         else:
             self.startup_text()
         select_flag = True
-	self.storyboard_menu_run = False
-	self.run = False
+        self.storyboard_menu_run = False
+        self.run = False
         #erasing the facilities and deciding the data file
         gui_buttons.instruction_off_flag = True
-	threades.total_update_flag = True
+        threades.total_update_flag = True
 	#panel.change_labels()
 	#gui_buttons.gui_obj.change_label_names()
         
@@ -357,13 +357,13 @@ class starting_intro:
 	
     def storyboardWindow(self,button = None):
         global select_flag
-	self.remove_buttons()
+        self.remove_buttons()
         
         self.lightgreen_color = (0,80,0)
         self.green_color = (0,150,0)
         self.black_color = (0,0,0)
         myfont1 = pygame.font.Font('font.ttf',threades.resize_pt(50))
-	
+
         myfont = pygame.font.Font("font.ttf", threades.resize_pt(20))
         buttonsurf = pygame.image.load(os.path.join('art','button_green.png')).convert_alpha()
         buttonsurf = pygame.transform.scale(buttonsurf, (38, threades.resize_pt_y(50)))
@@ -400,23 +400,29 @@ class starting_intro:
         
         
         self.win = gui.Window(position = position_win,size = size_win,parent = desktop2,style = win_style,text = model.text_file.storyboard_window_text[0], closeable = False,shadeable = False,moveable = False )
-	self.win.onClose = self.main_menu
+        self.win.onClose = self.main_menu
         vertical_dist = 150.0     #for the position of optionboxes
-	vertical_dist_photo = 120.0
-        storyboard_list_file = open('storyboard_list.pkl')
-        
-        for i in range(pickle.load(storyboard_list_file)):
-            storyboard_name = pickle.load(storyboard_list_file)
+        vertical_dist_photo = 120.0
+        # storyboard_list_file = open('storyboard_list.pkl')
+        storyboard_name = []
+        while True:
+            try:
+                with open('storyboard_list.pkl', 'rb') as f:
+                    storyboard_name.append(pickle.load(f, encoding='bytes'))
+            except EOFError:
+                break
+        for i in range(len(storyboard_name)):
+            
             if select_flag == True or os.path.exists(os.path.join('storyboards',str(storyboard_name[1]),'save_game.pkl')):
-		self.image = pygame.image.load(os.path.join('storyboards',str(storyboard_name[1]),'intro_image.png')).convert_alpha()
-		self.image = pygame.transform.scale(self.image, threades.resize_pos((150,120)))
-		finalSurface = pygame.surface.Surface(threades.resize_pos((150,150))).convert_alpha()
-		finalSurface.blit(self.image,threades.resize_pos((10,10)))
-		self.win.surf.blit(finalSurface,threades.resize_pos((160,vertical_dist_photo)))
+                self.image = pygame.image.load(os.path.join('storyboards',str(storyboard_name[1]),'intro_image.png')).convert_alpha()
+                self.image = pygame.transform.scale(self.image, threades.resize_pos((150,120)))
+                finalSurface = pygame.surface.Surface(threades.resize_pos((150,150))).convert_alpha()
+                finalSurface.blit(self.image,threades.resize_pos((10,10)))
+                self.win.surf.blit(finalSurface,threades.resize_pos((160,vertical_dist_photo)))
                 self.item = gui.Button(position = threades.resize_pos((450.0,vertical_dist),(900.0,600.0),self.win.size),size = threades.resize_pos((290,50)),parent = self.win,text = str(storyboard_name[1]),style = self.button_style_2)
                 self.item.onClick = self.select_storyboard
                 vertical_dist = vertical_dist + 180
-		vertical_dist_photo = vertical_dist_photo  + 180
+                vertical_dist_photo = vertical_dist_photo  + 180
     
 		
         self.skip_button = gui.Button(position = threades.resize_pos((180,490),(900.0,600.0),self.win.size), size = threades.resize_pos((110,30),(900.0,600.0),self.win.size), parent = self.win, text = model.text_file.skip_text[0],style = self.button_style)
@@ -643,7 +649,7 @@ class starting_intro:
         level_obj.new_level_stats(data_file,graphics_file) 
         model.game_controller.reset_time() 
         self.run = False
-	threades.load_initial_facilities()
+        threades.load_initial_facilities()
 	#threades.initialize_facilities()
 	#level_obj.new_level_stats(data_file,graphics_file) 
 
@@ -886,51 +892,51 @@ message_thread = None
 
 def select_lang():
     if 'language' in FLAGS.keys():
-	language = [ FLAGS['language'] ]
+        language = [ FLAGS['language'] ]
     else:
-	language = locale.getdefaultlocale()
+        language = locale.getdefaultlocale()
     if language[0][0:2] == 'en':
-	model.select_lang_flag = 'eng'
-	model.text_file = texts_eng
+        model.select_lang_flag = 'eng'
+        model.text_file = texts_eng
     elif language[0][0:2] == 'es':
-	model.select_lang_flag = 'spa'
-	model.text_file = texts_spa
+        model.select_lang_flag = 'spa'
+        model.text_file = texts_spa
 
 def process(arg):
-    print arg
+    print(arg)
     parts = arg.split('=')
     if parts[0] == '--language':
-	FLAGS['language'] = parts[1]
-    print FLAGS
+        FLAGS['language'] = parts[1]
+        print(FLAGS)
 
 def main():
     for arg in sys.argv[1:]:
-	process(arg)
-    select_lang()
-    global panel
-    global chat_screen
-    global level_setting
-    global message_thread
-    cursor = pygame.cursors.load_xbm(os.path.join('art', 'ff2_cursor.xbm'),os.path.join('art', 'ff2_cursor-mask.xbm'))
-    #print cursor
-    pygame.mouse.set_cursor(cursor[0],cursor[1],cursor[2],cursor[3])
-    # Displaying the WFP logo
-    intro_thread = threading.Thread(target = load_images.load_images, args=[])
-    intro_thread.start()
-    # Loading and starting the sound play
-    threades.audio.play_music(False,'soundtrack')
-    
-    threades.check_saved_game_level()
-    model.game_controller.reset_time()
-    gui_buttons.initialize_gui()
-    pause_screen()
-    intro_thread.join()
+        process(arg)
+        select_lang()
+        global panel
+        global chat_screen
+        global level_setting
+        global message_thread
+        cursor = pygame.cursors.load_xbm(os.path.join('art', 'ff2_cursor.xbm'),os.path.join('art', 'ff2_cursor-mask.xbm'))
+        #print cursor
+        pygame.mouse.set_cursor(cursor[0],cursor[1],cursor[2],cursor[3])
+        # Displaying the WFP logo
+        intro_thread = threading.Thread(target = load_images.load_images, args=[])
+        intro_thread.start()
+        # Loading and starting the sound play
+        threades.audio.play_music(False,'soundtrack')
+        
+        threades.check_saved_game_level()
+        model.game_controller.reset_time()
+        gui_buttons.initialize_gui()
+        pause_screen()
+        intro_thread.join()
     
     proceduralFlow.storyboard_level = threades.current_level
     if threades.current_level != 1:
         load_resume_game()
     else:
-	threades.load_initial_facilities()
+        threades.load_initial_facilities()
         data_file = os.path.join('storyboards',str(model.storyboard_file),'data','data1.pkl')
         model.init_cons(data_file)
         model.init_obj()

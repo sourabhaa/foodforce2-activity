@@ -498,7 +498,7 @@ class Actions:
 
 
     def loadLevelAgain(self):
-        print "Number 2"
+        print("Number 2")
         global storyboard_level
         data_file = os.path.join('storyboards',str(model.storyboard_file),'data','data'+str(storyboard_level)+'.pkl')
                 

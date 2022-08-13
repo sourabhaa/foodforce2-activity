@@ -70,9 +70,10 @@ class marketBarChart:
             pygame.draw.rect(surface,self.color_rect,threades.resize_rect((440,280,200,30)),2)
 
 
-    def updateChart(self,(x,y)):
+    def updateChart(self, coordinates):
         ''' Updates the bar chart on the basis of the mouse click
         '''
+        (x,y) = coordinates
         surface = self.surf
         if (x>threades.resize_pt_x(640)) and (x<threades.resize_pt_x(840)) and (y>threades.resize_pt_y(250)) and (y<threades.resize_pt_y(280)):
             pygame.draw.rect(surface,(0,0,0,180),threades.resize_rect((440,200,200,50)))
@@ -146,9 +147,10 @@ class barChart:
         pygame.draw.rect(surface,self.color_rect,threades.resize_rect((250,50,50,200)),2)
         pygame.draw.rect(surface,self.color_rect,threades.resize_rect((400,50,50,200)),2)
 
-    def updateChart(self,(x,y)):
+    def updateChart(self, coordinates):
         ''' Updates the bar chart on the basis of the mouse click
         '''
+        (x,y) = coordinates
         surface = self.surf
         #if the point is in the first bar
         if (x>threades.resize_pt_x(400)) and (x<threades.resize_pt_x(450)) and (y>threades.resize_pt_y(200)) and (y<threades.resize_pt_y(400)):
@@ -1169,7 +1171,7 @@ class buysell_button:
         else:
             label_text = model.text_file.buysell_text[3]
         self.message_label.text = label_text
-        print self.message_label.text
+        print(self.message_label.text)
 
 
     def close_win(self,button=None):
